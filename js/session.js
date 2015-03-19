@@ -85,36 +85,7 @@ $(document).ready(function() {
 	ref.child("session-votes").child("mmm").on("child_changed", function(childSnapshot) {
 		location.reload();
 
-		// key will be "fred" the first time and "wilma" the second time
-		var key = childSnapshot.key();
-
-		// childData will be the actual contents of the child
-		var card = childSnapshot.child("card").val();
-
-		var card = childSnapshot.child("card").val();
-		var cardImg = "<img src='img/card_back.png' height='160' width='100'>";
-		if (card != null && card != "none") {
-			totVotes++;
-			mapUserImage[key.replace(":", "")] = "<img src='img/cards/" + cards[parseInt(card)] + ".jpg'>";
-		} else if (totVotes > 0) {
-			totVotes--;
-		}
-
-		$("#" + key.replace(":", "")).html(cardImg);
-
-		if (totUsers <= totVotes) {
-			for (var id in mapUserImage) {
-				if (mapUserImage.hasOwnProperty(id)) {
-					$("#" + id).html(mapUserImage[id]);
-				}
-			}
-		} else {
-			for (var id in mapUserImage) {
-				if (mapUserImage.hasOwnProperty(id)) {
-					$("#" + id).html(cardImg);
-				}
-			}
-		}
+		
 
 	});
 
