@@ -7,13 +7,19 @@ var totVotes = 0;
 
 var mapUserImage = {};
 
+var idx = window.location.href.indexOf('?name=');
+var sessionname =  (idx > 0) ? window.location.href.slice(idx + 6) : '';
+if (sessionname == "") {
+	window.location.href = "/index.html";
+}
+
+
 $(document).ready(function() {
 	var sessionOwner = "";
 
 	var table = $("#container");
 
-	
-	ref.child("session-participants").child("mmm").on("value", function(aSnapshot) {
+	ref.child("session-participants").child(sessionname).on("value", function(aSnapshot) {
 
 		aSnapshot.forEach(function(childSnapshot) {
 
@@ -31,17 +37,17 @@ $(document).ready(function() {
 			row += "</div>";
 
 			var el = jQuery(row);
-			
-			jQuery("#container").append(el).masonry( 'reload' );
 
-			ref.child("session-votes").child("mmm").child(key).once("value", function(childSnapshot) {
+			jQuery("#container").append(el).masonry('reload');
+
+			ref.child("session-votes").child(sessionname).child(key).once("value", function(childSnapshot) {
 				var card = childSnapshot.child("card").val();
 				var cardImg = "<img src='img/cards/blank_card.png' height='160' width='100'>";
 				if (card != null && card != "none") {
 					cardImg = "<img src='img/card_back.png' height='160' width='100'>";
 					totVotes++;
 					mapUserImage[keyNoColum] = "<img src='img/cards/" + cards[parseInt(card)] + ".jpg'>";
-				} else if (totVotes > 0) {				
+				} else if (totVotes > 0) {
 					totVotes--;
 				}
 
@@ -53,18 +59,18 @@ $(document).ready(function() {
 							$("#" + id).html(mapUserImage[id]);
 						}
 					}
-				} 
+				}
 			});
 
 		});
 
 	});
 
-	ref.child("session-participants").child("mmm").on("child_changed", function(childSnapshot) {
+	ref.child("session-participants").child(sessionname).on("child_changed", function(childSnapshot) {
 		location.reload();
 	});
 
-	ref.child("session-votes").child("mmm").on("child_changed", function(childSnapshot) {
+	ref.child("session-votes").child(sessionname).on("child_changed", function(childSnapshot) {
 		location.reload();
 	});
 
