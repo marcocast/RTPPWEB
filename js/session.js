@@ -2,9 +2,9 @@ var ref = new Firebase('https://rtpp.firebaseio.com');
 
 var cardsStandard = ["card0", "cardhalf", "card1", "card2", "card3", "card5", "card8", "card13", "card20", "card40", "card100", "cardinfinite", "cardquestion", "cardcoffee"];
 
-var cardsFibonacci = ["card0", "cardhalf", "card1", "card2", "card3", "card5", "card8", "card13", "card20", "card40", "card100", "cardinfinite", "cardquestion", "cardcoffee"];
+var cardsFibonacci = ["card0", "card1", "card2", "card3", "card5", "card8", "card13", "card21", "card34", "card55", "card89", "card144", "cardinfinite", "cardquestion", "cardcoffee"];
 
-var cardsTshirt = ["card0", "cardhalf", "card1", "card2", "card3", "card5", "card8", "card13", "card20", "card40", "card100", "cardinfinite", "cardquestion", "cardcoffee"];
+var cardsTshirt = ["cardxs", "cards", "cardm", "cardl", "cardxl", "cardxxl", "cardinfinite", "cardquestion", "cardcoffee"];
 
 var totUsers = 0;
 var totVotes = 0;
@@ -18,13 +18,13 @@ if (sessionname == "") {
 }
 
 function getCard(type, index) {
-	
+
 	if (type == "Standard") {
 		return cardsStandard[index];
 	} else if (type == "Fibonacci") {
 		return cardsFibonacci[index];
 	} else if (type == "T-Shirt") {
-		return ccardsTshirtards[index];
+		return cardsTshirt[index];
 	} else {
 		return "";
 	}
@@ -37,9 +37,9 @@ $(document).ready(function() {
 	var table = $("#container");
 
 	ref.child("session-type").child(sessionname).once("value", function(typeSnapshot) {
-		
+
 		var cardType = typeSnapshot.child("cardType").val();
-		
+
 		ref.child("session-participants").child(sessionname).on("value", function(aSnapshot) {
 
 			aSnapshot.forEach(function(childSnapshot) {
