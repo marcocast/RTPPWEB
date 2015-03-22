@@ -52,6 +52,8 @@ $(document).ready(function() {
 
 				var row = "<div class='item'>";
 				row += "<br>";
+				row += "<div id='photo_" + keyNoColum + "'></div>";
+				row += "<br>";
 				row += "<strong>" + username + "</strong>";
 				row += "<br>";
 				row += "<div id='" + keyNoColum + "'></div>";
@@ -60,6 +62,19 @@ $(document).ready(function() {
 				var el = jQuery(row);
 
 				jQuery("#container").append(el).masonry('reload');
+
+				ref.child("users").child(key).once("value", function(userSnapshot) {
+					var photo = userSnapshot.child("photo").val();
+					var photoImg = "<img src='img/user.png' height='160' width='100'>";
+					if (photo != null && photo != "") {
+						var img = new Image();
+						img.src = "data:image/png;base64,"+photo.toString().trim();
+						img.style.height = '100px';
+                        img.style.width = '100px';
+						document.getElementById("photo_" + keyNoColum).appendChild(img);
+					}
+
+				});
 
 				ref.child("session-votes").child(sessionname).child(key).once("value", function(childSnapshot) {
 					var card = childSnapshot.child("card").val();
