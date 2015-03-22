@@ -76,6 +76,12 @@ $(document).ready(function() {
 						img.style.height = '100px';
                         img.style.width = '100px';
 						document.getElementById("photo_" + keyNoColum).appendChild(img);
+					}else{
+						var img = new Image();
+						img.src = "img/user.png";
+						img.style.height = '100px';
+                        img.style.width = '100px';
+						document.getElementById("photo_" + keyNoColum).appendChild(img);
 					}
 
 				});
