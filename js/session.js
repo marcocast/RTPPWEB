@@ -48,13 +48,11 @@ $(document).ready(function() {
 				var key = childSnapshot.key();
 				var keyNoColum = key.replace(":", "");
 
-				var username = childSnapshot.child("username").val();
-
 				var row = "<div class='item'>";
 				row += "<br>";
 				row += "<div id='photo_" + keyNoColum + "'></div>";
 				row += "<br>";
-				row += "<strong>" + username + "</strong>";
+				row += "<strong id='username_" + keyNoColum + "'></strong>";
 				row += "<br>";
 				row += "<div id='" + keyNoColum + "'></div>";
 				row += "</div>";
@@ -64,6 +62,12 @@ $(document).ready(function() {
 				jQuery("#container").append(el).masonry('reload');
 
 				ref.child("users").child(key).once("value", function(userSnapshot) {
+					
+					var username = userSnapshot.child("username").val();
+					$("#username_" + keyNoColum).html(username);
+					
+					
+					
 					var photo = userSnapshot.child("photo").val();
 					var photoImg = "<img src='img/user.png' height='160' width='100'>";
 					if (photo != null && photo != "") {
