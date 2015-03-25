@@ -11,6 +11,10 @@ var totVotes = 0;
 
 var mapUserImage = {};
 
+var loading = true;
+
+var cardType = "Stanbdard";
+
 var idx = window.location.href.indexOf('?name=');
 var sessionname = (idx > 0) ? window.location.href.slice(idx + 6) : '';
 if (sessionname == "") {
@@ -38,9 +42,9 @@ $(document).ready(function() {
 
 	ref.child("session-type").child(sessionname).once("value", function(typeSnapshot) {
 
-		var cardType = typeSnapshot.child("cardType").val();
+		cardType = typeSnapshot.child("cardType").val();
 
-		ref.child("session-participants").child(sessionname).on("value", function(aSnapshot) {
+		ref.child("session-participants").child(sessionname).once("value", function(aSnapshot) {
 
 			aSnapshot.forEach(function(childSnapshot) {
 
@@ -62,25 +66,23 @@ $(document).ready(function() {
 				jQuery("#container").append(el).masonry('reload');
 
 				ref.child("users").child(key).once("value", function(userSnapshot) {
-					
+
 					var username = userSnapshot.child("username").val();
 					$("#username_" + keyNoColum).html(username);
-					
-					
-					
+
 					var photo = userSnapshot.child("photo").val();
 					var photoImg = "<img src='img/user.png' height='160' width='100'>";
 					if (photo != null && photo != "") {
 						var img = new Image();
-						img.src = "data:image/png;base64,"+photo.toString().trim();
+						img.src = "data:image/png;base64," + photo.toString().trim();
 						img.style.height = '100px';
-                        img.style.width = '100px';
+						img.style.width = '100px';
 						document.getElementById("photo_" + keyNoColum).appendChild(img);
-					}else{
+					} else {
 						var img = new Image();
 						img.src = "img/user.png";
 						img.style.height = '100px';
-                        img.style.width = '100px';
+						img.style.width = '100px';
 						document.getElementById("photo_" + keyNoColum).appendChild(img);
 					}
 
@@ -109,7 +111,76 @@ $(document).ready(function() {
 				});
 
 			});
+
+			loading = false;
 		});
+
+	});
+
+	ref.child("session-participants").child(sessionname).on("child_added", function(childSnapshot) {
+		if (loading == false) {
+			totUsers++;
+			var key = childSnapshot.key();
+			var keyNoColum = key.replace(":", "");
+
+			var row = "<div class='item'>";
+			row += "<br>";
+			row += "<div id='photo_" + keyNoColum + "'></div>";
+			row += "<br>";
+			row += "<strong id='username_" + keyNoColum + "'></strong>";
+			row += "<br>";
+			row += "<div id='" + keyNoColum + "'></div>";
+			row += "</div>";
+
+			var el = jQuery(row);
+
+			jQuery("#container").append(el).masonry('reload');
+
+			ref.child("users").child(key).once("value", function(userSnapshot) {
+
+				var username = userSnapshot.child("username").val();
+				$("#username_" + keyNoColum).html(username);
+
+				var photo = userSnapshot.child("photo").val();
+				var photoImg = "<img src='img/user.png' height='160' width='100'>";
+				if (photo != null && photo != "") {
+					var img = new Image();
+					img.src = "data:image/png;base64," + photo.toString().trim();
+					img.style.height = '100px';
+					img.style.width = '100px';
+					document.getElementById("photo_" + keyNoColum).appendChild(img);
+				} else {
+					var img = new Image();
+					img.src = "img/user.png";
+					img.style.height = '100px';
+					img.style.width = '100px';
+					document.getElementById("photo_" + keyNoColum).appendChild(img);
+				}
+
+			});
+
+			ref.child("session-votes").child(sessionname).child(key).once("value", function(childSnapshot) {
+				var card = childSnapshot.child("card").val();
+				var cardImg = "<img src='img/cards/blank_card.png' height='160' width='100'>";
+				if (card != null && card != "none") {
+					cardImg = "<img src='img/card_back.png' height='160' width='100'>";
+					totVotes++;
+					mapUserImage[keyNoColum] = "<img src='img/cards/" + getCard(cardType, parseInt(card)) + ".jpg'>";
+				} else if (totVotes > 0) {
+					totVotes--;
+				}
+
+				$("#" + keyNoColum).html(cardImg);
+
+				if (totUsers <= totVotes) {
+					for (var id in mapUserImage) {
+						if (mapUserImage.hasOwnProperty(id)) {
+							$("#" + id).html(mapUserImage[id]);
+						}
+					}
+				}
+			});
+		}
 
 	});
 
